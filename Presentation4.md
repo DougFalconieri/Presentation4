@@ -27,6 +27,39 @@
 * This highly-inefficient process absurdly takes nearly as long as developing the software.
 * The best solution to this problem would be to replace the whole testing process with a more agile approach.
     * But until management can be convinced of that, automating some of the user testing process could save a huge amount of time.
-* In this project, I want to see if and how much Cucumber can help.
+* In this presentation, I want to see if and how much Cucumber can help.
 
+##Installing Cucumber
 
+* Cucumber works with my different programming languages and the installation depends which one you are using.
+* For the original Ruby version of Cucumber, you can easily install it as a jem.
+* The implementation of Cucumber is called SpecFlow.
+    * It can be installed using Microsoft's NuGet package management system.
+    * Integration with Visual Studio can be downloaded using the IDE's built-in extension manager.
+* Any implementation of Cucumber can be combined with Selenium to test web applications by driving a web browser.
+* The implementation that I am planning to focus on is the Java implementation.
+    * To use Cucumber for Java, you need several JAR files.
+    * You always need `cucumber-core-<version>.jar`, `cucumber-jvm-deps-<version>.jar` and `gherkin-<version>.jar`.
+    * You also need a back-end JAR file.
+        * For Java 8, this is `cucumber-java8-<version>.jar`.
+        * For earlier versions of Java, it's `cucumber-java-<version>.jar`.
+        * There are alternate back-end JAR files for many other JVM languages including Groovy, Scala, Clojure, jRuby and Jython.
+    * The version number of the Cucumber core JAR and back-end JAR should match.
+        * The Gherkin and JVM Deps JARs will have different version numbers.
+    * With these four JARs on the classpath, you can run Cucumber from the command line with the command `java cucumber.api.cli.Main -p pretty'.
+    * There are several additional JARs you can download from the Cucumber website to extend the capabilities of Cucumber.
+        * There are JARs to enable integration with the test frameworks jUnit and TestNG.
+        * There are also JARs to enable integration with several Java dependency injection frameworks including Spring, Guice, PicoContainer and others.
+        
+##Testing a Feature With Cucumber
+
+* The tests for a feature of your application are defined in a plain-text file with an extension of `.feature`.
+* In this file, the tests are described using *Gherkin*, Cucumber's DSL for test cases.
+* In Cucumber terminology, tests are called *scenarios* and there can be multiple scenarios for each feature.
+* Each scenario consists of multiple *steps* for Cucumber to execute.
+
+##Gherkin
+
+* Now we will look at the syntax of the Gherkin test-definition language.
+* The syntax is designed to be very close to English.
+    * For non-English speakers, there are also versions of Gherkin for 40 other natural languages.
