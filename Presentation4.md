@@ -64,6 +64,7 @@
 * The syntax is designed to be very close to English.
     * For non-English speakers, there are also versions of Gherkin for 40 other natural languages.
 * We'll start with a really contrived example to see how Gherkin looks.
+* We'll write a test for a class that provides a method that doubles an integer.
 
 `Feature: Math
     Scenario: Double a number
@@ -126,5 +127,80 @@
 * Typically, in a real project you would use a build framework like Ant, Maven or Gradle to execute your Cucumber tests.
 * However, to keep things simple we will run it using the built-in command line interface (CLI).
     * It's not *that* simple though since it requires manually wrestling with fussy Java classpaths.
+* Cucumber for Java is an executable JAR file so it can be run with the following command: `java cucumber.api.cli.Main`.
+* We need to make sure all of Cucumber's dependency JARs are on the classpath.
+    * We can do this with the `-cp` argument to the `java` executable.
+    * In this case, we will put all the dependencies in a directory called `jars` under our project root directory.
+    * So the command to run our feature becomes: `java -cp "jars/*;bin" cucumber.api.cli.Main`.
+* We also need to pass an argument to Cucumber to tell it where to find our feature file.
+    * In this example, we'll put all of our `.feature` files in a directory under the project root called `features`.
+    * Our Cucumber command becomes: `java -cp "jars/*;bin" cucumber.api.cli.Main features`.
+* The Cucumber CLI also supports some other arguments that I found useful.
+    * The `-p` argument tells Cucumber to apply a plugin.
+    * The `pretty` pluging modifies the output that the CLI writes to the console to be easier to read.
+    * By default, the console output uses a feature called ANSI colors which is not supported on Windows by default.
+        * If you are running Cucumber on Windows like I am, you need to either install a special app or apply the `--monochrome` or `-m` argument to the CLI.
+    * After applying these additional arguments, the command looks like `java -cp "jars/*;bin" cucumber.api.cli.Main -p pretty features --monochrome`.
+* Our Cucumber command now runs, finds our feature file and prints out output saying that we have one scenario and three steps that all have a status of "undefined".
+* To define the steps, we need to create "step definitions" that explain how to map the steps to executable code.
+* Step definitions are implemented as code blocks in whichever language you are using Cucumber in -- Java in our case.
+* We'll put the step definitions for our `Math` feature in a class called `MathStepDefinitions` in a package called `step_definitions`.
+    * Cucumber doesn't actually care what you name this class.
+* In Java 8, your class implements the `cucumber.api.java8.En` interface.
+* Cucumber provides methods for each type of step (`Given`, `Then`, `When`, etc.).
+* Each method takes a regular expression as its first argument and a closure as its second argument.
+    * The closure code tells Cucumber how to run the step.
+    * The regular expression must match the step text in the feature file after the initial keyword in order for Cucumber to call the associated closure.
+    * Any numbers or quoted strings in the step text get converted to parameters to the closure.
+        * When Cucumber calls the closure, it will pass in the appropriate value parsed from the feature file.
+    * Nicely, you don't need to worry about writing a correct regular expression to match each one of your steps.
+        * When you run Cucumber on an undefined feature, the console output will contain suggested skeleton methods for each step.
+            * All you need to do is paste them into your step definition class and supply the actual behavior.
+    * If you are a regular expression ninja, you can write a custom regex to match multiple steps at once, but this is really not necessary.
+    * Cucumber considers any step definition that throws an exception of any kind to be a failed step.
+        * Otherwise, its considered passed.
+        * Cucumber includes a special type of exception called `PendingException` to indicate steps that haven't been implemented.
+* Let's create step definitions for each one of our steps.
+    * Our first step looks like this: `Given the number 5`.
+    * Cucumber suggests the following skeleton implementation: `Given("^the number (\\d+)$", (Integer arg1) -> {});`.
+    * Cucumber will call this closure and pass it the number 5 as the parameter `arg1`.
+    * `Given` steps are for initializing state so the main thing we need to do to implement this step is to store the parameter for use by later steps.
+    * So we create an instance variable called `inputNumber` and save the value of arg1 to it.
+        * We'll also convert the Integer class to an `int` primitive to make it easier to work with.
+    * Our second step looks like this: `When I double the number`.
+    * Cucumber suggests the following skeleton: `When("^I double the number$", () -> {});`.
+    * `When` steps should actually call the code being tested -- in our case our `MathHelper` class.
+    * In true TDD fashion, we haven't actually created our `MathHelper` class so we'll take a moment to do so now.
+        * `MathHelper` has a single method called `doubleValue` that takes in a integer and returns is double.
+    * Now that we've got a method to test, we call it passing in the `inputValue` that we stored earlier and save the result to a new instance variable called `result`.
+    * Our final step is: `Then I should get 10`.
+    * This produces the skeleton: `Then("^I should get (\\d+)$", (Integer arg1) -> {});`.
+    * In a `Then` step, we need to check our output against its expected value.
+        * Cucumber will pass in the expected value (which is 10 in this case) as `arg1`.
+        * We need to compare it against the `result` instance variable we stored in the previous step.
+        * Cucumber allows you to choose any way to do this as long as it throws an exception if the values don't match.
+        * One way to do this is using jUnit asserts which is what we will do.
+        * This requires downloading the jUnit JAR (and its sole dependency hamcrest) and adding them to our project's `jar` folder.
+        * Then we can use jUnit's `assertEquals` method to check our result like this: `assertEquals(arg1.intValue(), result);`.
+* In the closure-less versions of Java before Java8, the syntax for step definitions looked completely different and made use of Java annotations to association a regular expression with a method.
+    * In Java 7, our `When` step might look like this: 
+    
+    `@Given("^the number (\\d+)$")
+    public void theNumber(Integer arg1) throws Throwable {}`
+    
+* Now that we have step definitions defined, our test should pass if we run it.
+* However, in order to run it we need to update our CLI command so Cucumber can find our step definition class as well as our `MathHelper` class.
+    * It took a lot of fiddling in order to get this right.
+    * I'm using Eclipse to compile the project's Java files so the source is located in a directory called `src` and Eclipse puts the compiled `.class` files in a directory called `bin`.
+    * First, we need to add the `bin` directory to our classpath listing.
+    * Then we use the `--glue` or `-g` argument to tell Cucumber the name of the package that our step definitions our located in: `step-definitions`.
+    * Our final CLI command looks like this: `java -cp "jars/*;bin" cucumber.api.cli.Main -p pretty features --monochrome  -g step_definitions`.
+* And it works! Our test runs and passes!
+    * If we change the 10 in the last step of our scenario to 11, the test fails.
+    * Even though it was a contrived example it contains a large amount of what you would need to use Cucumber on a real project.
+    
+
+    
+    
 
     
