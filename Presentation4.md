@@ -199,7 +199,56 @@
     * If we change the 10 in the last step of our scenario to 11, the test fails.
     * Even though it was a contrived example it contains a large amount of what you would need to use Cucumber on a real project.
     
+## Acceptance Testing of Web Applications
 
+* Since much of my career has been spent working on web applications, I am particularly interested in how Cucumber could be used to test them.
+* In my opinion, integration testing is particularly important for web applications because they are tough to adequately test with unit tests.
+    * Many screens I have worked on use a database framework to run a SQL query against a database and convert the results into objects which are then passed to a rendering engine to generate HTML or JSON.
+    * In between the database and the rendering engine, there is often very little logic to test and trying to unit test the straight-forward logic that there is requires creating lots of mock objects.
+    * The real logic is all embedded in the database query and a template file with client-side JavaScript code.
+        * Both are difficult or impossible to thoroughly test with isolated unit tests.
+        * But automated integration tests can provide a lot of benefits.
+* To run automated tests against a web application, you need a way to drive a web browser.
+* Probably the most popular tool for doing this is Selenium which is available from [here](http://www.seleniumhq.org/).
+    * Selenium comes with drivers for all of most popular web browsers -- including Chrome, Internet Explorer, FireFox and Safari.
+    * The Selenium API for driving browsers is available in many programming languages including Java, C#, Python and Ruby.
+    * The Selenium API contains methods for finding HTML elements like text boxes and buttons and performing interactions like entering text and pressing buttons.
+        * This allows you to do most of what you would do in a manual test of the web application.
+* One powerful aspect of Cucumber is that the step definitions that implement your tests are simply Java code (or whatever language you are using) so you can use any libraries you need to carry out your tests.
+    * In the example we worked through earlier, we saw how easy it is to use jUnit with Cucumber.
+    * We can just as easily incorporate calls to the Selenium API to drive web applications.
+    * No special set-up is required other than adding Selenium's required JAR files to the project and becoming familiar with is API.
+    
+## Advice from the Experts
+
+    * The authors of *The Cucumber for Java Book* have a lot of experience using Cucumber in the real world.
+        * One of the authors created Cucumber while the other two also have been using it for years.
+    * They offer several tips for using Cucumber successfully that I found interesting.
+    * One downside of integration tests when compared to unit tests is they take longer to run.
+        * In order to keep the test suite runnable in a reasonable amount of time, the authors recommend not creating too many scenarios.
+            * Instead of testing every possible situation, focus on the most important or representative ones.
+            * Consider if unit testing may be a better option for some scenarios such as those involving complex business logic with many possible code branches.
+    * Another problem that can hurt the success of your testing process is brittle tests that break often and need to be fixed constantly.
+        * The authors argue that brittle tests are often caused by interdependencies between scenarios.
+            * An example of this would be if one scenario loads data in the database that the next scenario expect to still be there when it runs.
+            * These type of interdependencies are tempting because they can make tests run faster and reduce the amount of code needed in the step definitions, but they can quickly become a maintenance nightmare.
+        * The authors emphasize the importance of making sure each scenario is completely dependent.
+    * Cucumber features are supposed to written collaboratively by the developers and users, but this doesn't work if the users are disinterested.
+        * One thing that cause users to lose interest is not having access to the features because they are located only on a developer's computer or in a version control system
+            * The authors suggest using the Relish tool to publish the features on a server where all the team members can easily access them.
+        * Even if they can access the features, users may not want to read them if they are too long and tedious.
+            * This can be avoided by keeping the features short and as close to natural English as possible.
+            * Technical details on long lists of specific steps for executing the tests should be avoided.
+                * These details can go into the step definitions instead leaving the features focused more on what the system should do instead of how it should be done.
+                
+## Final Thoughts
+
+* Cucumber is interesting because it is both a tool and a way of organizing software development.
+* My projects could definitely benefit from automated integration testing, but you don't really need Cucumber just for that.
+* After learning about Cucumber, the thing that intrigues me most is the idea of turning the application's requirements or user stories into executable tests.
+    * This could save a lot of the effort of creating a separate set of test cases.
+* I am looking forward to trying Cucumber on my future projects.
+        
     
     
 
