@@ -93,7 +93,8 @@ Feature: Math
     * All the steps in a `Background` block will be executed at the beginning of every scenario in the file.
 * When you need to set up a large amount of similar state at the beginning of a scenario, you can use Gherkin's data table syntax instead of tons of repetitive `Given` steps.
     * The data table syntax looks like this:
-
+    * Cucumber has built-in functionality to access and compare the data in data tables.
+    
 ```
 Given the menu contains these items:
 | name            | price  |
@@ -101,8 +102,7 @@ Given the menu contains these items:
 | Quarter Pounder | 3.79   |
 | Filet-O-Fish    | 3.79   |
 ```
-
-    * Cucumber has built-in functionality to access and compare the data in data tables.
+    
 * Another situation that can occur in a `.feature` file is when you have multiple scenarios that are identical except for the value of some variables.
     * This can be fixed by using `Scenario Outline` blocks.
     * A `Scenario Outline` block starts by defining steps like a normal scenario.
