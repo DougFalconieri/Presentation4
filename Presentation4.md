@@ -92,8 +92,8 @@ Feature: Math
     * `When` steps can also be included in a `Background` block.
     * All the steps in a `Background` block will be executed at the beginning of every scenario in the file.
 * When you need to set up a large amount of similar state at the beginning of a scenario, you can use Gherkin's data table syntax instead of tons of repetitive `Given` steps.
-    * The data table syntax looks like this:
     * Cucumber has built-in functionality to access and compare the data in data tables.
+    * The data table syntax looks like this:
     
 ```
 Given the menu contains these items:
