@@ -32,11 +32,10 @@
 ##Installing Cucumber
 
 * Cucumber works with my different programming languages and the installation depends which one you are using.
-* For the original Ruby version of Cucumber, you can easily install it as a jem.
-* The implementation of Cucumber is called SpecFlow.
+* For the original Ruby version of Cucumber, you can easily install it as a gem.
+* The implementation of Cucumber for C# is called SpecFlow.
     * It can be installed using Microsoft's NuGet package management system.
     * Integration with Visual Studio can be downloaded using the IDE's built-in extension manager.
-* Any implementation of Cucumber can be combined with Selenium to test web applications by driving a web browser.
 * The implementation that I am planning to focus on is the Java implementation.
     * To use Cucumber for Java, you need several JAR files.
     * You always need `cucumber-core-<version>.jar`, `cucumber-jvm-deps-<version>.jar` and `gherkin-<version>.jar`.
@@ -46,7 +45,7 @@
         * There are alternate back-end JAR files for many other JVM languages including Groovy, Scala, Clojure, jRuby and Jython.
     * The version number of the Cucumber core JAR and back-end JAR should match.
         * The Gherkin and JVM Deps JARs will have different version numbers.
-    * With these four JARs on the classpath, you can run Cucumber from the command line with the command `java cucumber.api.cli.Main -p pretty'.
+    * With these four JARs on the classpath, you can run Cucumber from the command line with the command `java cucumber.api.cli.Main -p pretty`.
     * There are several additional JARs you can download from the Cucumber website to extend the capabilities of Cucumber.
         * There are JARs to enable integration with the test frameworks jUnit and TestNG.
         * There are also JARs to enable integration with several Java dependency injection frameworks including Spring, Guice, PicoContainer and others.
@@ -66,11 +65,11 @@
 * We'll start with a really contrived example to see how Gherkin looks.
 * We'll write a test for a class that provides a method that doubles an integer.
 
-`Feature: Math
-    Scenario: Double a number
-    Given the number 5
-    When I double the number
-    Then I should get 10`
+>Feature: Math
+>   Scenario: Double a number
+>   Given the number 5
+>   When I double the number
+>   Then I should get 10
     
 * Each `.feature` file contains one `Feature` block.
     * `Feature` blocks don't get turned into executable code.
@@ -93,11 +92,11 @@
 * When you need to set up a large amount of similar state at the beginning of a scenario, you can use Gherkin's data table syntax instead of tons of repetitive `Given` steps.
     * The data table syntax looks like this:
 
-`Given the menu contains these items:
-| name            | price  |
-| Big Mac         | 3.99   |
-| Quarter Pounder | 3.79   |
-| Filet-O-Fish    | 3.79   |`
+>Given the menu contains these items:
+>| name            | price  |
+>| Big Mac         | 3.99   |
+>| Quarter Pounder | 3.79   |
+>| Filet-O-Fish    | 3.79   |
 
     * Cucumber has built-in functionality to access and compare the data in data tables.
 * Another situation that can occur in a `.feature` file is when you have multiple scenarios that are identical except for the value of some variables.
@@ -131,14 +130,14 @@
 * We need to make sure all of Cucumber's dependency JARs are on the classpath.
     * We can do this with the `-cp` argument to the `java` executable.
     * In this case, we will put all the dependencies in a directory called `jars` under our project root directory.
-    * So the command to run our feature becomes: `java -cp "jars/*;bin" cucumber.api.cli.Main`.
+    * So the command to run our feature becomes: `java -cp "jars/*" cucumber.api.cli.Main`.
 * We also need to pass an argument to Cucumber to tell it where to find our feature file.
     * In this example, we'll put all of our `.feature` files in a directory under the project root called `features`.
     * Our Cucumber command becomes: `java -cp "jars/*;bin" cucumber.api.cli.Main features`.
 * The Cucumber CLI also supports some other arguments that I found useful.
     * The `-p` argument tells Cucumber to apply a plugin.
     * The `pretty` pluging modifies the output that the CLI writes to the console to be easier to read.
-    * By default, the console output uses a feature called ANSI colors which is not supported on Windows by default.
+    * By default, the console output uses a feature called ANSI colors which is not supported natively on Windows.
         * If you are running Cucumber on Windows like I am, you need to either install a special app or apply the `--monochrome` or `-m` argument to the CLI.
     * After applying these additional arguments, the command looks like `java -cp "jars/*;bin" cucumber.api.cli.Main -p pretty features --monochrome`.
 * Our Cucumber command now runs, finds our feature file and prints out output saying that we have one scenario and three steps that all have a status of "undefined".
@@ -185,8 +184,8 @@
 * In the closure-less versions of Java before Java8, the syntax for step definitions looked completely different and made use of Java annotations to association a regular expression with a method.
     * In Java 7, our `When` step might look like this: 
     
-    `@Given("^the number (\\d+)$")
-    public void theNumber(Integer arg1) throws Throwable {}`
+>    @Given("^the number (\\d+)$")
+>    public void theNumber(Integer arg1) throws Throwable {}
     
 * Now that we have step definitions defined, our test should pass if we run it.
 * However, in order to run it we need to update our CLI command so Cucumber can find our step definition class as well as our `MathHelper` class.
@@ -221,25 +220,28 @@
     
 ## Advice from the Experts
 
-    * The authors of *The Cucumber for Java Book* have a lot of experience using Cucumber in the real world.
-        * One of the authors created Cucumber while the other two also have been using it for years.
-    * They offer several tips for using Cucumber successfully that I found interesting.
-    * One downside of integration tests when compared to unit tests is they take longer to run.
-        * In order to keep the test suite runnable in a reasonable amount of time, the authors recommend not creating too many scenarios.
-            * Instead of testing every possible situation, focus on the most important or representative ones.
-            * Consider if unit testing may be a better option for some scenarios such as those involving complex business logic with many possible code branches.
-    * Another problem that can hurt the success of your testing process is brittle tests that break often and need to be fixed constantly.
-        * The authors argue that brittle tests are often caused by interdependencies between scenarios.
-            * An example of this would be if one scenario loads data in the database that the next scenario expect to still be there when it runs.
-            * These type of interdependencies are tempting because they can make tests run faster and reduce the amount of code needed in the step definitions, but they can quickly become a maintenance nightmare.
+* The authors of *The Cucumber for Java Book* have a lot of experience using Cucumber in the real world.
+    * One of the authors created Cucumber while the other two also have been using it for years.
+* They offer several tips for using Cucumber successfully that I found interesting.
+* One downside of integration tests when compared to unit tests is they take longer to run.
+    * In order to keep the test suite runnable in a reasonable amount of time, the authors recommend not creating too many scenarios.
+        * Instead of testing every possible situation, focus on the most important or representative ones.
+        * Consider if unit testing may be a better option for some scenarios such as those involving complex business logic with many possible code branches.
+        * It's also possible to use tags to choose some tests to run frequently and others that only need to run once in a while.
+* Another problem that can hurt the success of your testing process is brittle tests that break often and need to be fixed constantly.
+    * The authors argue that brittle tests are often caused by interdependencies between scenarios.
+        * An example of this would be if one scenario loads data in the database that the next scenario expect to still be there when it runs.
+        * These type of interdependencies are tempting because they can make tests run faster and reduce the amount of code needed in the step definitions, but they can quickly become a maintenance nightmare.
         * The authors emphasize the importance of making sure each scenario is completely dependent.
-    * Cucumber features are supposed to written collaboratively by the developers and users, but this doesn't work if the users are disinterested.
-        * One thing that cause users to lose interest is not having access to the features because they are located only on a developer's computer or in a version control system
-            * The authors suggest using the Relish tool to publish the features on a server where all the team members can easily access them.
-        * Even if they can access the features, users may not want to read them if they are too long and tedious.
-            * This can be avoided by keeping the features short and as close to natural English as possible.
-            * Technical details on long lists of specific steps for executing the tests should be avoided.
-                * These details can go into the step definitions instead leaving the features focused more on what the system should do instead of how it should be done.
+    * Brittle tests can also be caused by testing in a shared environment like a database where other users and processes can interfere with your test.
+        * Its best if the tests run in their own independent environment so failed tests can't be caused by other users.
+* Cucumber features are supposed to written collaboratively by the developers and users, but this doesn't work if the users are disinterested.
+    * One thing that cause users to lose interest is not having access to the features because they are located only on a developer's computer or in a version control system.
+        * The authors suggest using the Relish tool to publish the features on a server where all the team members can easily access them.
+    * Even if they can access the features, users may not want to read them if they are too long and tedious.
+        * This can be avoided by keeping the features short and as close to natural English as possible.
+        * Technical details and long lists of specific steps for executing the tests should be avoided.
+            * These details can go into the step definitions instead leaving the features focused more on what the system should do instead of how it should be done.
                 
 ## Final Thoughts
 
@@ -248,8 +250,3 @@
 * After learning about Cucumber, the thing that intrigues me most is the idea of turning the application's requirements or user stories into executable tests.
     * This could save a lot of the effort of creating a separate set of test cases.
 * I am looking forward to trying Cucumber on my future projects.
-        
-    
-    
-
-    
