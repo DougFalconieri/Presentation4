@@ -65,11 +65,13 @@
 * We'll start with a really contrived example to see how Gherkin looks.
 * We'll write a test for a class that provides a method that doubles an integer.
 
+```
 Feature: Math
-   Scenario: Double a number
-   Given the number 5
-   When I double the number
-   Then I should get 10
+    Scenario: Double a number
+    Given the number 5
+    When I double the number
+    Then I should get 10
+```
     
 * Each `.feature` file contains one `Feature` block.
     * `Feature` blocks don't get turned into executable code.
@@ -92,11 +94,13 @@ Feature: Math
 * When you need to set up a large amount of similar state at the beginning of a scenario, you can use Gherkin's data table syntax instead of tons of repetitive `Given` steps.
     * The data table syntax looks like this:
 
+```
 Given the menu contains these items:
 | name            | price  |
 | Big Mac         | 3.99   |
 | Quarter Pounder | 3.79   |
 | Filet-O-Fish    | 3.79   |
+```
 
     * Cucumber has built-in functionality to access and compare the data in data tables.
 * Another situation that can occur in a `.feature` file is when you have multiple scenarios that are identical except for the value of some variables.
@@ -184,8 +188,10 @@ Given the menu contains these items:
 * In the closure-less versions of Java before Java8, the syntax for step definitions looked completely different and made use of Java annotations to association a regular expression with a method.
     * In Java 7, our `When` step might look like this: 
     
-    @Given("^the number (\\d+)$")
-    public void theNumber(Integer arg1) throws Throwable {}
+```    
+@Given("^the number (\\d+)$")
+public void theNumber(Integer arg1) throws Throwable {}
+```
     
 * Now that we have step definitions defined, our test should pass if we run it.
 * However, in order to run it we need to update our CLI command so Cucumber can find our step definition class as well as our `MathHelper` class.
